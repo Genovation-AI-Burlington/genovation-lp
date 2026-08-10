@@ -120,12 +120,14 @@ a { color: inherit; }
   letter-spacing: 0.19em;
   font-size: 0.82rem;
 }
+/* stays on mobile. on a "near me" search, proximity is the argument. */
 .masthead-note {
   color: var(--dim);
   font-size: 0.86rem;
   letter-spacing: 0.01em;
+  white-space: nowrap;
 }
-@media (max-width: 640px) { .masthead-note { display: none; } }
+@media (max-width: 420px) { .masthead-note { font-size: 0.78rem; } }
 
 /* ==========================================================================
    The board. First viewport.
@@ -134,30 +136,47 @@ a { color: inherit; }
 .board {
   background: var(--steel-800);
   border-bottom: 1px solid var(--line);
-  padding-block: clamp(36px, 6vw, 68px) clamp(28px, 4vw, 44px);
+  padding-block: clamp(28px, 3.4vw, 46px) clamp(26px, 3.4vw, 40px);
 }
 
-.board-head { margin-bottom: clamp(28px, 4vw, 44px); }
+/* The board is the thesis, so the headline may not eat the fold. Above
+   1080px the sub sits beside the headline instead of under it, which buys
+   back roughly 90px and gets the columns into the first viewport on a
+   1440x900 laptop. */
+.board-head { margin-bottom: clamp(26px, 3.4vw, 38px); }
+
+@media (min-width: 1080px) {
+  .board-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 12px clamp(32px, 4vw, 64px);
+    align-items: end;
+  }
+}
 
 .board-h1 {
-  font-size: clamp(2.1rem, 5.4vw, 4.15rem);
-  max-width: 17ch;
-  margin-bottom: 18px;
+  font-size: clamp(2.05rem, 4vw, 3.3rem);
+  max-width: 21ch;
+  margin-bottom: 16px;
 }
+@media (min-width: 1080px) { .board-h1 { margin-bottom: 0; } }
 
 .board-sub {
   color: var(--dim);
-  font-size: clamp(1rem, 1.5vw, 1.19rem);
-  max-width: 54ch;
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  max-width: 48ch;
   line-height: 1.5;
+  padding-bottom: 4px;
 }
 .board-sub b { color: var(--enamel); font-weight: 600; }
 
+/* stretch, not start: the painted dividers have to run the full height or the
+   three columns read as three separate lists instead of one board. */
 .cols {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  align-items: start;
+  align-items: stretch;
 }
 @media (max-width: 900px) {
   .cols { grid-template-columns: 1fr; gap: 34px; }
