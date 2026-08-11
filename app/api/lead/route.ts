@@ -93,16 +93,6 @@ export async function POST(req: Request) {
         companyName: lead.company || undefined,
         source: `Google Ads: ${lead.keyword || lead.variant}`,
         tags: ['google-ads', `lp:${lead.variant}`].filter(Boolean),
-        customFields: [],
-        // everything the sales call needs, in one readable block
-        notes: [
-          `Ad group keyword: ${lead.keyword}`,
-          `Landing page: /${lead.variant}`,
-          `Task: ${lead.task}`,
-          `Hours a week: ${lead.hours || 'not given'}`,
-          `gclid: ${lead.gclid || 'none'}`,
-          `Campaign: ${lead.utm_campaign || 'none'}`,
-        ].join('\n'),
       }),
     });
 
@@ -111,6 +101,38 @@ export async function POST(req: Request) {
       // still a 200 to the browser: the lead is in the log and recoverable
       console.error('[lead] GHL rejected the contact', res.status, detail, JSON.stringify(lead));
       return NextResponse.json({ ok: true, stored: 'log' });
+    }
+
+    // The contact endpoint rejects a `notes` property, so the detail the sales
+    // call actually needs goes on as a separate note. Failing here still leaves
+    // a usable contact, so it never downgrades the result.
+    const created = await res.json();
+    const contactId = created?.contact?.id;
+
+    if (contactId) {
+      const note = [
+        `Ad group keyword: ${lead.keyword}`,
+        `Landing page: /${lead.variant}`,
+        `Task: ${lead.task}`,
+        `Hours a week: ${lead.hours || 'not given'}`,
+        `gclid: ${lead.gclid || 'none'}`,
+        `Campaign: ${lead.utm_campaign || 'none'}`,
+      ].join('\n');
+
+      const noteRes = await fetch(`${GHL}/contacts/${contactId}/notes`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Version: API_VERSION,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ body: note }),
+      });
+
+      if (!noteRes.ok) {
+        console.error('[lead] note failed', noteRes.status, await noteRes.text(), contactId);
+      }
     }
 
     return NextResponse.json({ ok: true, stored: 'crm' });
