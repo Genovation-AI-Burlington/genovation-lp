@@ -13,7 +13,7 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const blockers = [];
 const warnings = [];
 
-// ---------- 1. no placeholder numbers on a live page ----------
+// ---------- 1. no unconfirmed figures on a live page ----------
 const variants = readFileSync(join(ROOT, 'lib/variants.ts'), 'utf8');
 const placeholders = variants
   .split('\n')
@@ -21,7 +21,7 @@ const placeholders = variants
 if (placeholders.length) {
   blockers.push(
     `${placeholders.length} job card(s) still marked placeholder in lib/variants.ts. ` +
-      `Replace the invented figure with the real client result, or delete the card.`,
+      `Confirm the figure or remove the card before pointing traffic here.`,
   );
 }
 

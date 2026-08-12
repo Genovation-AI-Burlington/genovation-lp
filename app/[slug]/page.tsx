@@ -94,11 +94,19 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
               <div className="col">
                 <div className="col-head">
                   <span className="stencil">Fixed</span>
-                  <span className="stencil count">{v.fixed.length}</span>
+                  <span className="stencil count">
+                    {v.fixed.filter((c) => !c.placeholder || process.env.NODE_ENV !== 'production')
+                      .length}
+                  </span>
                 </div>
-                {v.fixed.map((c) => (
-                  <Card key={c.title} card={c} closed />
-                ))}
+                {/* A card whose figure has not been supplied yet is visible while
+                    developing and never in production. A visitor should see one
+                    fewer card, never a flag telling them a number is missing. */}
+                {v.fixed
+                  .filter((c) => !c.placeholder || process.env.NODE_ENV !== 'production')
+                  .map((c) => (
+                    <Card key={c.title} card={c} closed />
+                  ))}
               </div>
             </div>
 

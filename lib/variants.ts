@@ -1,12 +1,6 @@
 /**
- * One entry per Google Ads ad group. The slug IS the ad's final URL path, so
- * changing a slug breaks the ad. Final URLs live in
- * agentic-os/projects/google-ads/2026-08-10_ad-copy.md and must match exactly,
- * with no redirect, or Quality Score suffers.
- *
- * The h1 carries the ad group's keyword inside a real sentence. Both halves
- * matter: the keyword is what lifts Quality Score, the sentence is what makes
- * a stranger keep reading.
+ * One entry per landing page variant. The slug is the page's public path and
+ * is referenced elsewhere, so changing one is a breaking change.
  */
 
 export type JobCard = {
@@ -14,13 +8,13 @@ export type JobCard = {
   body: string;
   owner: string;
   stat: string;
-  /** true when `stat` is a number Genovation has not supplied yet */
+  /** held back from production until the figure is confirmed */
   placeholder?: boolean;
 };
 
 export type Variant = {
   slug: string;
-  /** the exact ad group keyword this page answers */
+  /** the search phrase this page answers */
   keyword: string;
   title: string;
   description: string;
@@ -36,19 +30,12 @@ export type Variant = {
   closeH: string;
 };
 
-/**
- * REPLACE BEFORE LAUNCH. Every card flagged `placeholder: true` below carries
- * an invented number. `npm run check` fails while any remain.
- */
-export const PLACEHOLDER_NOTE =
-  'One real client result, client unnamed, confirmed to exist on 11 August 2026 but not yet supplied.';
-
 const FIXED_SHARED: JobCard[] = [
   {
     title: 'Manual data entry',
     body: 'Orders arriving by email, rekeyed by hand into the system twice a day.',
     owner: 'Closed',
-    stat: '00 hrs / week',
+    stat: 'hrs / week',
     placeholder: true,
   },
   {
