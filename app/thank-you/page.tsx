@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import Mark from '@/components/Mark';
 
 export const metadata: Metadata = {
@@ -12,6 +13,16 @@ export const metadata: Metadata = {
  *
  * NEXT_PUBLIC_GHL_CALENDAR_URL is the GoHighLevel calendar embed link. Without
  * it the page still works and says plainly what happens next.
+ *
+ * The booking widget changes height between choosing a slot and entering
+ * details, and the details step is much taller. A fixed frame height hides the
+ * confirm button, which silently kills every booking. Their form_embed.js
+ * listens for the widget's own resize messages and sets the height inline,
+ * which beats the stylesheet. The CSS height is the fallback if that script
+ * ever fails to load, so it is deliberately taller than the tallest step.
+ *
+ * This is the only third-party script on the site, and it is only here. This
+ * page is post-conversion, so its weight cannot affect Quality Score.
  */
 export default function ThankYou() {
   const calendar = process.env.NEXT_PUBLIC_GHL_CALENDAR_URL;
@@ -39,12 +50,18 @@ export default function ThankYou() {
 
           <div className="cal-frame">
             {calendar ? (
-              <iframe
-                src={calendar}
-                title="Choose a time for your free 30 minute call"
-                loading="lazy"
-                scrolling="no"
-              />
+              <>
+                <iframe
+                  src={calendar}
+                  id={`${calendar.split('/').pop()}_booking`}
+                  title="Choose a time for your free 30 minute call"
+                  scrolling="no"
+                />
+                <Script
+                  src="https://link.msgsndr.com/js/form_embed.js"
+                  strategy="afterInteractive"
+                />
+              </>
             ) : (
               <div className="cal-fallback">
                 <h3>We will be in touch within one business day</h3>
