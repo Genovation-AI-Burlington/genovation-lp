@@ -24,8 +24,39 @@ export const metadata: Metadata = {
  * This is the only third-party script on the site, and it is only here. This
  * page is post-conversion, so its weight cannot affect Quality Score.
  */
-export default function ThankYou() {
-  const calendar = process.env.NEXT_PUBLIC_GHL_CALENDAR_URL;
+export default async function ThankYou({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const base = process.env.NEXT_PUBLIC_GHL_CALENDAR_URL;
+  const sp = await searchParams;
+  const one = (k: string) => {
+    const v = sp[k];
+    return (Array.isArray(v) ? v[0] : v)?.trim() || '';
+  };
+
+  /**
+   * Prefill the booking widget from what they already typed.
+   *
+   * Without this the visitor types name, email and phone a second time, and
+   * GoHighLevel creates a SECOND contact when the two do not match character
+   * for character. Ali's own test produced exactly that: two records for the
+   * same person, one with the form answers and one with the booking.
+   */
+  let calendar = base;
+  if (base) {
+    const name = one('n');
+    const first = name.split(/\s+/)[0] ?? '';
+    const last = name.split(/\s+/).slice(1).join(' ');
+    const params = new URLSearchParams();
+    if (first) params.set('first_name', first);
+    if (last) params.set('last_name', last);
+    if (one('e')) params.set('email', one('e'));
+    if (one('p')) params.set('phone', one('p'));
+    const qs = params.toString();
+    if (qs) calendar = `${base}${base.includes('?') ? '&' : '?'}${qs}`;
+  }
 
   return (
     <>
@@ -53,7 +84,7 @@ export default function ThankYou() {
               <>
                 <iframe
                   src={calendar}
-                  id={`${calendar.split('/').pop()}_booking`}
+                  id="ghl-booking"
                   title="Choose a time for your free 30 minute call"
                   scrolling="no"
                 />

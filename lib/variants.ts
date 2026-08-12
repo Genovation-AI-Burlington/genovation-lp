@@ -133,6 +133,35 @@ export const VARIANTS: Variant[] = [
     fixed: FIXED_SHARED,
     closeH: 'A process you cannot see is a process nobody can fix.',
   },
+  {
+    slug: 'ai-automation-agency',
+    keyword: 'ai automation agency',
+    title: 'AI automation agency in Burlington, Ontario | Genovation AI',
+    description:
+      'An AI automation agency that builds around how your business works, then stays to maintain it. Glitches fixed within 48 hours. Book a free 30 minute call.',
+    h1: 'An AI automation agency that stays after the work is delivered',
+    sub: 'Custom built around how your business actually works, then maintained. Glitches fixed within 48 hours of you flagging them. <b>Every job on this board has a name against it.</b>',
+    slotTitle: 'Your repetitive task',
+    slotNote: 'Put it on the board and we will talk it through on a free 30 minute call.',
+    taskLabel: 'What repetitive job eats the most time?',
+    taskPlaceholder: 'e.g. the same list of customers followed up by hand every month',
+    inHand: [
+      {
+        title: 'Invoice reminders',
+        body: 'Overdue invoices found and followed up without anyone remembering to.',
+        owner: 'Faisal',
+        stat: 'Day 1',
+      },
+      {
+        title: 'Lead routing',
+        body: 'Enquiries sorted and passed to the right person without a middle step.',
+        owner: 'Barkan',
+        stat: 'Day 2',
+      },
+    ],
+    fixed: FIXED_SHARED,
+    closeH: 'Plenty of agencies will build it. Fewer will still be answering in month six.',
+  },
 ];
 
 export const bySlug = (slug: string) => VARIANTS.find((v) => v.slug === slug);

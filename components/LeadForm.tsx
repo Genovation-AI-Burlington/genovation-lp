@@ -61,7 +61,16 @@ export default function LeadForm({ variant }: { variant: Variant }) {
       const label = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
       if (w.gtag && label) w.gtag('event', 'conversion', { send_to: label });
 
-      router.push(`/thank-you?v=${variant.slug}`);
+      // Carry the details into the booking widget so the visitor is not asked
+      // for the same four fields twice, and so GoHighLevel matches this to the
+      // contact we just created instead of making a second one.
+      const q = new URLSearchParams({
+        v: variant.slug,
+        n: data.name?.trim() ?? '',
+        e: data.email?.trim() ?? '',
+        p: data.phone?.trim() ?? '',
+      });
+      router.push(`/thank-you?${q.toString()}`);
     } catch {
       setSending(false);
       const to = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
