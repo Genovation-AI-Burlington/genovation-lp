@@ -32,11 +32,10 @@ export type Variant = {
 
 const FIXED_SHARED: JobCard[] = [
   {
-    title: 'Manual data entry',
-    body: 'Orders arriving by email, rekeyed by hand into the system twice a day.',
+    title: 'Dormant customer list',
+    body: '10,000 idle leads in an optical store database, called and texted automatically about offers and expiring insurance.',
     owner: 'Closed',
-    stat: 'hrs / week',
-    placeholder: true,
+    stat: '+15% revenue',
   },
   {
     title: 'Client onboarding',
