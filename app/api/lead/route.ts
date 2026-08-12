@@ -19,6 +19,18 @@ import { NextResponse } from 'next/server';
 const GHL = 'https://services.leadconnectorhq.com';
 const API_VERSION = '2021-07-28';
 
+/**
+ * Custom fields on the GoHighLevel contact.
+ *
+ * The gclid is the only piece of data here that cannot be reconstructed later.
+ * It arrives once, on the landing URL, and is what ties a paying client back to
+ * the exact search that produced them. Keeping it in a queryable field rather
+ * than buried in a note is what makes offline conversion upload possible
+ * without hand-parsing every record.
+ */
+const FIELD_GCLID = 'gyxW9O87KlIwMkVe44L6';
+const FIELD_KEYWORD = '9a8rr9hm42i96V2u3xxl';
+
 type Body = {
   name?: string;
   email?: string;
@@ -93,6 +105,10 @@ export async function POST(req: Request) {
         companyName: lead.company || undefined,
         source: `Google Ads: ${lead.keyword || lead.variant}`,
         tags: ['google-ads', `lp:${lead.variant}`].filter(Boolean),
+        customFields: [
+          ...(lead.gclid ? [{ id: FIELD_GCLID, value: lead.gclid }] : []),
+          ...(lead.keyword ? [{ id: FIELD_KEYWORD, value: lead.keyword }] : []),
+        ],
       }),
     });
 
