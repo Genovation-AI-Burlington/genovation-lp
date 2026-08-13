@@ -113,18 +113,71 @@ export async function POST(req: Request) {
       }),
     });
 
-    if (!res.ok) {
-      const detail = await res.text();
-      // still a 200 to the browser: the lead is in the log and recoverable
-      console.error('[lead] GHL rejected the contact', res.status, detail, JSON.stringify(lead));
-      return NextResponse.json({ ok: true, stored: 'log' });
-    }
+    /**
+     * A duplicate is not a failure.
+     *
+     * Deduplication was turned on in GoHighLevel on 14 August 2026, so creating
+     * a contact whose email or phone already exists now returns 400 rather than
+     * a second record. That happens for anyone Jamal has already met, anyone
+     * who fills the form twice, and any existing client who clicks an ad.
+     *
+     * Treating it as a failure would drop the lead into the server log, and
+     * with it the gclid, which is the one value in this whole system that
+     * cannot be recovered later. The 400 body carries the existing contact's
+     * id, so use it: attach this click's attribution to the record already
+     * there, and carry on as if the create had worked.
+     */
+    let contactId: string | undefined;
 
-    // The contact endpoint rejects a `notes` property, so the detail the sales
-    // call actually needs goes on as a separate note. Failing here still leaves
-    // a usable contact, so it never downgrades the result.
-    const created = await res.json();
-    const contactId = created?.contact?.id;
+    if (res.ok) {
+      const created = await res.json();
+      contactId = created?.contact?.id;
+    } else {
+      const detail = await res.text();
+      let existing: string | undefined;
+      try {
+        existing = JSON.parse(detail)?.meta?.contactId;
+      } catch {
+        /* not JSON, fall through to the log */
+      }
+
+      if (!existing) {
+        // still a 200 to the browser: the lead is in the log and recoverable
+        console.error('[lead] GHL rejected the contact', res.status, detail, JSON.stringify(lead));
+        return NextResponse.json({ ok: true, stored: 'log' });
+      }
+
+      contactId = existing;
+      console.warn('[lead] contact already existed, updating it instead', existing);
+
+      const fields = [
+        ...(lead.gclid ? [{ id: FIELD_GCLID, value: lead.gclid }] : []),
+        ...(lead.keyword ? [{ id: FIELD_KEYWORD, value: lead.keyword }] : []),
+      ];
+
+      const upd = await fetch(`${GHL}/contacts/${existing}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Version: API_VERSION,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        // no locationId on an update, the endpoint rejects it
+        body: JSON.stringify({
+          firstName,
+          lastName: rest.join(' '),
+          companyName: lead.company || undefined,
+          source: `Google Ads: ${lead.keyword || lead.variant}`,
+          tags: ['google-ads', `lp:${lead.variant}`].filter(Boolean),
+          ...(fields.length ? { customFields: fields } : {}),
+        }),
+      });
+
+      if (!upd.ok) {
+        console.error('[lead] could not update the existing contact', upd.status, await upd.text());
+      }
+    }
 
     if (contactId) {
       const note = [
