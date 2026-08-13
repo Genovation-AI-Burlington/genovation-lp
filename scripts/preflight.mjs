@@ -8,8 +8,15 @@
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
+import nextEnv from '@next/env';   // CommonJS, so default import only
 
 const ROOT = new URL('..', import.meta.url).pathname;
+
+// Read .env.local exactly the way `next build` reads it. Without this the
+// script sees an empty process.env and reports four blockers that do not
+// exist, which trains everyone to ignore it. A launch guard nobody believes
+// is worse than no launch guard.
+nextEnv.loadEnvConfig(ROOT);
 const blockers = [];
 const warnings = [];
 
@@ -54,6 +61,9 @@ const need = {
   GHL_PIT: 'leads land in the server log instead of the CRM.',
   GHL_LOCATION_ID: 'leads land in the server log instead of the CRM.',
 };
+// This checks .env.local, not Vercel. The two have to be kept identical by
+// hand, so if a variable is added in the Vercel dashboard it has to be added
+// here too or this check is passing on stale information.
 for (const [key, why] of Object.entries(need)) {
   if (!process.env[key]) blockers.push(`${key} is not set: ${why}`);
 }

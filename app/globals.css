@@ -466,6 +466,13 @@ a { color: inherit; }
 .cal-fallback p { color: var(--dim); max-width: 52ch; }
 
 /* ==========================================================================
+   Deep links. Ad sitelinks land on these sections, so give each a little
+   headroom rather than jamming its heading against the top of the viewport.
+   ========================================================================== */
+
+#board, #how, #promise, #questions { scroll-margin-top: 24px; }
+
+/* ==========================================================================
    Motion. One authored moment: a card being placed on the board.
    ========================================================================== */
 

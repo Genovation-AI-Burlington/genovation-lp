@@ -117,7 +117,9 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         </section>
 
         {/* ---------- how a job moves ---------- */}
-        <section className="band">
+        {/* The section ids are ad sitelink targets. Renaming one breaks a
+            sitelink silently: the page still loads, it just stops scrolling. */}
+        <section className="band" id="how">
           <div className="shell">
             <h2 className="band-h">How a job moves across the board</h2>
             <p className="band-lede">
@@ -154,7 +156,7 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         </section>
 
         {/* ---------- what we commit to ---------- */}
-        <section className="band alt">
+        <section className="band alt" id="promise">
           <div className="shell">
             <h2 className="band-h">What is actually promised</h2>
             <p className="band-lede">
@@ -206,9 +208,9 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         </section>
 
         {/* ---------- objections ---------- */}
-        <section className="band">
+        <section className="band" id="questions">
           <div className="shell">
-            <h2 className="band-h">The three questions everybody asks</h2>
+            <h2 className="band-h">The four questions everybody asks</h2>
             <div className="qa">
               <div>
                 <h3 className="qa-q">Will this actually work for my specific workflow?</h3>
