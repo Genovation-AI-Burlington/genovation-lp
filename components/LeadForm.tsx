@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { captureAttribution, readAttribution } from '@/lib/attribution';
 import type { Variant } from '@/lib/variants';
+import { normalizePhone } from '@/lib/phone';
 
 type Errors = Partial<Record<'name' | 'email' | 'phone' | 'task', string>>;
 
@@ -68,7 +69,7 @@ export default function LeadForm({ variant }: { variant: Variant }) {
         v: variant.slug,
         n: data.name?.trim() ?? '',
         e: data.email?.trim() ?? '',
-        p: data.phone?.trim() ?? '',
+        p: normalizePhone(data.phone ?? ''),
       });
       router.push(`/thank-you?${q.toString()}`);
     } catch {

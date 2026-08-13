@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { normalizePhone } from '@/lib/phone';
 
 /**
  * Lead intake.
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
 
   const name = clean(body.name, 120);
   const email = clean(body.email, 200);
-  const phone = clean(body.phone, 40);
+  const phone = normalizePhone(clean(body.phone, 40));
 
   if (!name || !email || !phone) {
     return NextResponse.json({ error: 'missing required fields' }, { status: 422 });
