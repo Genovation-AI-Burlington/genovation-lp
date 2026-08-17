@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { captureAttribution, readAttribution } from '@/lib/attribution';
 import type { Variant } from '@/lib/variants';
 import { normalizePhone } from '@/lib/phone';
+import { track } from '@/lib/analytics';
 
 type Errors = Partial<Record<'name' | 'email' | 'phone' | 'task', string>>;
 
@@ -16,11 +17,23 @@ export default function LeadForm({ variant }: { variant: Variant }) {
   const [errors, setErrors] = useState<Errors>({});
   const [failed, setFailed] = useState<string | null>(null);
   const firstBad = useRef<HTMLFormElement>(null);
+  const started = useRef(false);
 
   // the gclid is only in the URL on arrival, so grab it before anything else
   useEffect(() => {
     captureAttribution();
   }, []);
+
+  /**
+   * First touch of any field. The gap between this and a submit is the number
+   * that matters: someone who never starts has a page problem, someone who
+   * starts and stops has a form problem, and the two need different fixes.
+   */
+  function onFirstFocus() {
+    if (started.current) return;
+    started.current = true;
+    track('form_start', { variant: variant.slug });
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,6 +50,8 @@ export default function LeadForm({ variant }: { variant: Variant }) {
 
     setErrors(next);
     if (Object.keys(next).length) {
+      // which field turns people back, not just that something did
+      track('form_invalid', { fields: Object.keys(next).sort().join(','), variant: variant.slug });
       const el = form.querySelector<HTMLElement>('.has-error input, .has-error textarea');
       el?.focus();
       return;
@@ -62,6 +77,10 @@ export default function LeadForm({ variant }: { variant: Variant }) {
       const label = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
       if (w.gtag && label) w.gtag('event', 'conversion', { send_to: label });
 
+      // the same moment in GA4's vocabulary, so its funnel closes on the same
+      // event the Ads column counts
+      track('generate_lead', { variant: variant.slug, keyword: variant.keyword });
+
       // Carry the details into the booking widget so the visitor is not asked
       // for the same four fields twice, and so GoHighLevel matches this to the
       // contact we just created instead of making a second one.
@@ -74,6 +93,7 @@ export default function LeadForm({ variant }: { variant: Variant }) {
       router.push(`/thank-you?${q.toString()}`);
     } catch {
       setSending(false);
+      track('form_failed', { variant: variant.slug });
       const to = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
       setFailed(
         to
@@ -86,7 +106,7 @@ export default function LeadForm({ variant }: { variant: Variant }) {
   const field = (k: keyof Errors) => (errors[k] ? 'field has-error' : 'field');
 
   return (
-    <form ref={firstBad} onSubmit={onSubmit} noValidate>
+    <form ref={firstBad} onSubmit={onSubmit} onFocusCapture={onFirstFocus} noValidate>
       <label className={field('name')}>
         <span>Name</span>
         <input name="name" type="text" autoComplete="name" aria-invalid={!!errors.name} />

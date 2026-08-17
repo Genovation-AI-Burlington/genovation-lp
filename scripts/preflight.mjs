@@ -68,6 +68,14 @@ for (const [key, why] of Object.entries(need)) {
   if (!process.env[key]) blockers.push(`${key} is not set: ${why}`);
 }
 
+if (!process.env.NEXT_PUBLIC_GA4_ID) {
+  warnings.push(
+    'NEXT_PUBLIC_GA4_ID is not set. Conversions still report, but nothing explains the ' +
+      'clicks that did not convert: no scroll depth, no time on page, no way to tell ' +
+      'whether people reached the form. Like the gclid, this cannot be backfilled.',
+  );
+}
+
 if (!process.env.NEXT_PUBLIC_GHL_CALENDAR_URL) {
   warnings.push(
     'NEXT_PUBLIC_GHL_CALENDAR_URL is not set. The form still captures the lead, but the ' +
