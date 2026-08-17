@@ -32,6 +32,23 @@ const API_VERSION = '2021-07-28';
 const FIELD_GCLID = 'gyxW9O87KlIwMkVe44L6';
 const FIELD_KEYWORD = '9a8rr9hm42i96V2u3xxl';
 
+/**
+ * Pipeline the lead is placed on, at the moment the form is submitted.
+ *
+ * Without this the first opportunity is only created when someone books a call,
+ * so anyone who fills the form and never books sits on no board at all. On paid
+ * traffic those are the majority, and they are exactly the people worth
+ * following up. They were findable in Contacts by tag, which is not where anyone
+ * looks.
+ *
+ * The GoHighLevel workflow moves this same card to Discovery Meeting on booking
+ * rather than making a second one, because "Allow duplicate opportunities" is
+ * off on that action. So the card travels:
+ *   Form Submitted -> Discovery Meeting -> Meeting Done -> Proposal Sent -> Closed
+ */
+const PIPELINE_ID = 'REqE5nrYEM5dhsvhrW9P';                            // Form Pipeline
+const STAGE_FORM_SUBMITTED = '9d242620-d53a-4d17-a8f5-263631543330';  // its first stage
+
 type Body = {
   name?: string;
   email?: string;
@@ -202,6 +219,39 @@ export async function POST(req: Request) {
 
       if (!noteRes.ok) {
         console.error('[lead] note failed', noteRes.status, await noteRes.text(), contactId);
+      }
+    }
+
+    /**
+     * Put them on the board.
+     *
+     * Deliberately last and deliberately non-fatal. The contact, its custom
+     * fields and the note are what a sales call actually needs; the opportunity
+     * is what makes the pipeline honest. Failing here should never downgrade a
+     * lead that is already safely in the CRM.
+     */
+    if (contactId) {
+      const oppRes = await fetch(`${GHL}/opportunities/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Version: API_VERSION,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          pipelineId: PIPELINE_ID,
+          pipelineStageId: STAGE_FORM_SUBMITTED,
+          locationId,
+          contactId,
+          name: lead.name,
+          status: 'open',
+          source: `Google Ads: ${lead.keyword || lead.variant}`,
+        }),
+      });
+
+      if (!oppRes.ok) {
+        console.error('[lead] opportunity failed', oppRes.status, await oppRes.text(), contactId);
       }
     }
 
