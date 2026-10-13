@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import Mark from '@/components/Mark';
+import TrackedLink from '@/components/TrackedLink';
+import { LINES, lineText } from '@/lib/contact';
 
 export const metadata: Metadata = {
   title: 'Pick a time | Genovation AI',
@@ -77,6 +79,24 @@ export default async function ThankYou({
           <p className="booked-p">
             We have your details, so the call happens either way. Choosing a slot below just means
             you get it on your terms instead of ours. Thirty minutes, no pitch deck.
+          </p>
+          <p className="booked-call">
+            Or skip the calendar and call now:{' '}
+            {LINES.map((l, i) => (
+              <span key={l.who}>
+                {i > 0 && ', '}
+                <TrackedLink
+                  href={`tel:${l.tel}`}
+                  event={l.event}
+                  place="thank_you"
+                  className="tel"
+                  label={`Call ${l.who} at ${l.shown}`}
+                >
+                  {lineText(l)}
+                </TrackedLink>
+              </span>
+            ))}
+            .
           </p>
 
           <div className="cal-frame">

@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import LeadForm from '@/components/LeadForm';
 import Mark from '@/components/Mark';
+import OfficeMap from '@/components/OfficeMap';
+import TrackedLink from '@/components/TrackedLink';
+import { LINES, OFFICE } from '@/lib/contact';
 import { bySlug, SLUGS, type JobCard } from '@/lib/variants';
 
 export const dynamicParams = false;
@@ -77,6 +80,30 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
                 <div className="slot place" id="board">
                   <h2 className="slot-title">{v.slotTitle}</h2>
                   <p className="slot-note">{v.slotNote}</p>
+                  {/* For the visitor who will not fill in a form. It sits above
+                      the fields so it is found without scrolling, and stays
+                      quiet so the form is still the ask: no orange block here. */}
+                  <div className="lines-strip">
+                    <p className="lines-ask">Rather talk than type? Call one of us.</p>
+                    <div className="lines-row">
+                      {LINES.map((l) => (
+                        <TrackedLink
+                          key={l.who}
+                          href={`tel:${l.tel}`}
+                          event={l.event}
+                          place="form"
+                          className="line"
+                          label={`Call ${l.who} at ${l.shown}`}
+                        >
+                          <span className="line-who">{l.who}</span>
+                          <span className="line-dash" aria-hidden="true">
+                            -
+                          </span>
+                          <span className="line-num">{l.shown}</span>
+                        </TrackedLink>
+                      ))}
+                    </div>
+                  </div>
                   <LeadForm variant={v} />
                 </div>
               </div>
@@ -249,6 +276,55 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
 
+        {/* ---------- where we are ---------- */}
+        <section className="band alt" id="find">
+          <div className="shell">
+            <h2 className="band-h">Where to find us</h2>
+            <p className="band-lede">
+              One office in Burlington, and two phones. Each number rings a founder directly, not a
+              call centre.
+            </p>
+            <div className="find">
+              <ul className="find-list">
+                {LINES.map((l) => (
+                  <li key={l.who}>
+                    <TrackedLink
+                      href={`tel:${l.tel}`}
+                      event={l.event}
+                      place="office"
+                      className="find-line"
+                      label={`Call ${l.who} at ${l.shown}`}
+                    >
+                      <span className="find-who">{l.who}</span>
+                      <span className="find-dash" aria-hidden="true">
+                        -
+                      </span>
+                      <span className="find-num">{l.shown}</span>
+                    </TrackedLink>
+                  </li>
+                ))}
+                <li>
+                  <span className="find-addr">
+                    {OFFICE.street}
+                    <br />
+                    {OFFICE.city}
+                    <TrackedLink
+                      href={OFFICE.mapLink}
+                      event="map_open"
+                      place="office"
+                      className="find-open"
+                      newTab
+                    >
+                      Open in Google Maps
+                    </TrackedLink>
+                  </span>
+                </li>
+              </ul>
+              <OfficeMap />
+            </div>
+          </div>
+        </section>
+
         {/* ---------- close ---------- */}
         <section className="close-band">
           <div className="shell">
@@ -266,7 +342,9 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
 
       <footer className="foot">
         <div className="shell foot-in">
-          <span>Genovation AI, Burlington, Ontario</span>
+          <span>
+            Genovation AI, {OFFICE.street}, {OFFICE.city}
+          </span>
           <span>Custom automation, voice agents, and internal tools.</span>
         </div>
       </footer>
