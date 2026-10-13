@@ -33,6 +33,17 @@ const FIELD_GCLID = 'gyxW9O87KlIwMkVe44L6';
 const FIELD_KEYWORD = '9a8rr9hm42i96V2u3xxl';
 
 /**
+ * What the lead typed, as fields as well as in the note.
+ *
+ * A GoHighLevel workflow can hand a contact field to another system and cannot
+ * hand it a note. The follow-up voice agent opens with the lead's own words
+ * ("you said X takes about N hours a week"), so both answers have to be
+ * somewhere a workflow can read. The note stays: it is what a person reads.
+ */
+const FIELD_TASK = 'ZL6bblI1PypocLdNNJoY';   // contact.repetitive_task
+const FIELD_HOURS = 'S1WFdW5n3zGc4ztxoJI7';  // contact.hours_a_week
+
+/**
  * Pipeline the lead is placed on, at the moment the form is submitted.
  *
  * Without this the first opportunity is only created when someone books a call,
@@ -105,6 +116,16 @@ export async function POST(req: Request) {
 
   const [firstName, ...rest] = name.split(/\s+/);
 
+  // One list for the create and for the update of an existing contact, so the
+  // two cannot drift. An empty answer is left out rather than sent as blank:
+  // on an update a blank would wipe what the contact already holds.
+  const fields = [
+    ...(lead.gclid ? [{ id: FIELD_GCLID, value: lead.gclid }] : []),
+    ...(lead.keyword ? [{ id: FIELD_KEYWORD, value: lead.keyword }] : []),
+    ...(lead.task ? [{ id: FIELD_TASK, value: lead.task }] : []),
+    ...(lead.hours ? [{ id: FIELD_HOURS, value: lead.hours }] : []),
+  ];
+
   try {
     const res = await fetch(`${GHL}/contacts/`, {
       method: 'POST',
@@ -123,10 +144,7 @@ export async function POST(req: Request) {
         companyName: lead.company || undefined,
         source: `Google Ads: ${lead.keyword || lead.variant}`,
         tags: ['google-ads', `lp:${lead.variant}`].filter(Boolean),
-        customFields: [
-          ...(lead.gclid ? [{ id: FIELD_GCLID, value: lead.gclid }] : []),
-          ...(lead.keyword ? [{ id: FIELD_KEYWORD, value: lead.keyword }] : []),
-        ],
+        customFields: fields,
       }),
     });
 
@@ -166,11 +184,6 @@ export async function POST(req: Request) {
 
       contactId = existing;
       console.warn('[lead] contact already existed, updating it instead', existing);
-
-      const fields = [
-        ...(lead.gclid ? [{ id: FIELD_GCLID, value: lead.gclid }] : []),
-        ...(lead.keyword ? [{ id: FIELD_KEYWORD, value: lead.keyword }] : []),
-      ];
 
       const upd = await fetch(`${GHL}/contacts/${existing}`, {
         method: 'PUT',
