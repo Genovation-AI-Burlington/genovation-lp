@@ -75,6 +75,17 @@ type Body = {
 const clean = (s: unknown, max = 500) => (typeof s === 'string' ? s.trim().slice(0, max) : '');
 
 export async function POST(req: Request) {
+  // A Vercel preview is a test copy of this site, made for review. Its form
+  // must not reach the CRM: a lead there creates a real contact and texts
+  // Faisal and Jamal. Vercel sets VERCEL_ENV to "preview" on those builds and
+  // to "production" on automation.genovation.ai, so the live form is unchanged.
+  // It runs first, so an empty test request to a preview proves it is on
+  // without anything being sent. Added 18 Oct 2026 on Ali's yes.
+  if (process.env.VERCEL_ENV === 'preview') {
+    console.warn('[lead] preview build: form accepted, not sent to the CRM');
+    return NextResponse.json({ ok: true, stored: 'preview' });
+  }
+
   let body: Body;
   try {
     body = await req.json();
