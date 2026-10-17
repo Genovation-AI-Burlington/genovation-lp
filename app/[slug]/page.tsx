@@ -121,17 +121,22 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         {/* ---------- how it works ---------- */}
         <section className="band" id="how">
           <div className="shell">
-            <h2 className="band-h" data-reveal>
-              How it works
-            </h2>
-            <p className="band-lede">Four stages. You can see which one your job is in at any point.</p>
-            <ProcessBoard />
-            <div className="cta-block cta-left">
-              <TrackedLink href="#board" event="cta_click" place="how" className="btn">
-                {CTA}
-              </TrackedLink>
-              <p className="cta-note">{CTA_NOTE}</p>
-            </div>
+            <ProcessBoard
+              head={
+                <>
+                  <h2 className="band-h">How it works</h2>
+                  <p className="band-lede">Four stages. You can see which one your job is in at any point.</p>
+                </>
+              }
+              foot={
+                <div className="cta-block cta-left">
+                  <TrackedLink href="#board" event="cta_click" place="how" className="btn">
+                    {CTA}
+                  </TrackedLink>
+                  <p className="cta-note">{CTA_NOTE}</p>
+                </div>
+              }
+            />
           </div>
         </section>
 

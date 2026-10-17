@@ -72,16 +72,14 @@ export const STAGES: { name: string; steps: string[] }[] = [
 ];
 
 /**
- * How fast the board checks off its steps.
+ * How fast the board follows the scroll.
  *
- * `stepMs` is the shortest gap between two checks. A step is checked only once
- * it is on screen and its turn has come, so on a wide screen, where the whole
- * board is visible, the board plays at this pace; on a phone, where the stages
- * are stacked, it follows the scroll but never runs faster than this.
- * `startAt` is how far up the screen a step has to be before it can be checked,
- * as a share of the screen height from the top (0.75 = the lower quarter).
+ * `pxPerStep`: on a wide screen the section stays on screen while the visitor
+ * scrolls this many pixels per step (12 steps x 80 = 960 px). Bigger is slower.
+ * `line`: on a phone, a step is checked when its middle passes this share of
+ * the screen height from the top (0.7 = 70% down). Smaller is later.
  */
-export const BOARD_PACE = { stepMs: 700, startAt: 0.75 };
+export const BOARD_PACE = { pxPerStep: 80, line: 0.7 };
 
 /** "Why owners pick Genovation". Each one is already promised in the live ads. */
 export const REASONS: { title: string; body: string }[] = [

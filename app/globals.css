@@ -264,11 +264,11 @@ p { text-wrap: pretty; }
   flex: none;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  background: var(--banner);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 8px 18px -10px rgba(15, 26, 61, 0.6);
 }
 .job-h { font-size: 17px; font-weight: 650; line-height: 1.35; letter-spacing: -0.01em; }
 .job-p { margin-top: 4px; font-size: 15.5px; color: var(--ink-soft); line-height: 1.55; }
@@ -318,6 +318,16 @@ p { text-wrap: pretty; }
 /* ==========================================================================
    How it works: the process board
    ========================================================================== */
+
+/* On a wide, tall enough screen the heading and the board stay on screen while
+   the visitor scrolls through the room under them; ProcessBoard turns that
+   scroll into checked steps. The conditions must match PINNED in
+   ProcessBoard.tsx. Anywhere else the room is zero and nothing is pinned. */
+.how-room { height: 0; }
+@media (min-width: 981px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  .how-pin { position: sticky; top: 88px; }
+  .how-room { height: calc(var(--steps, 12) * var(--px-per-step, 80px)); }
+}
 
 .board {
   margin-top: 40px;
