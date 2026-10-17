@@ -4,10 +4,11 @@ import DirectLines from '@/components/DirectLines';
 import LeadForm from '@/components/LeadForm';
 import Masthead from '@/components/Masthead';
 import OfficeMap from '@/components/OfficeMap';
+import ProcessBoard from '@/components/ProcessBoard';
 import SiteFooter from '@/components/SiteFooter';
 import TrackedLink from '@/components/TrackedLink';
-import { GENERAL, LINES, OFFICE } from '@/lib/contact';
-import { bySlug, SLUGS, type JobCard } from '@/lib/variants';
+import { GENERAL, LINES, OFFICE, REVIEWS } from '@/lib/contact';
+import { bySlug, CTA, CTA_NOTE, SLUGS } from '@/lib/variants';
 
 export const dynamicParams = false;
 
@@ -30,22 +31,82 @@ export async function generateMetadata({
   };
 }
 
-function Card({ card, closed }: { card: JobCard; closed?: boolean }) {
-  const cls = ['card', closed ? 'is-closed' : '', card.placeholder ? 'is-placeholder' : '']
-    .filter(Boolean)
-    .join(' ');
+/** The H1 with its result words in the accent colour. */
+function Headline({ text, accent }: { text: string; accent: string }) {
+  const at = text.indexOf(accent);
+  if (at === -1) return <>{text}</>;
   return (
-    <article className={cls}>
-      {card.placeholder && <span className="placeholder-flag">Real number needed</span>}
-      <h3 className="card-title">{card.title}</h3>
-      <p className="card-body">{card.body}</p>
-      <p className="card-foot">
-        <span className="owner">{card.owner}</span>
-        <span>{card.stat}</span>
-      </p>
-    </article>
+    <>
+      {text.slice(0, at)}
+      <span className="accent">{accent}</span>
+      {text.slice(at + accent.length)}
+    </>
   );
 }
+
+function Stars() {
+  return (
+    <span className="stars" aria-hidden="true">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg key={i} viewBox="0 0 20 20" width="15" height="15">
+          <path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.6L10 14.7l-5.1 2.7 1-5.6-4.1-4 5.7-.8z" fill="currentColor" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+/** The four kinds of work, each with a plain line icon drawn for this page. */
+const JOBS = [
+  {
+    title: 'Calls and messages answered',
+    body: 'A phone or chat agent answers, takes the details and books the call, day or night.',
+    icon: (
+      <path d="M6.6 3.5h2.6l1.4 3.6-1.9 1.2a9 9 0 0 0 4.9 4.9l1.2-1.9 3.6 1.4v2.6a1.6 1.6 0 0 1-1.7 1.6A13.4 13.4 0 0 1 5 4.9a1.6 1.6 0 0 1 1.6-1.4z" />
+    ),
+  },
+  {
+    title: 'Every new lead followed up',
+    body: 'New enquiries get a reply and a follow up, without anyone having to remember.',
+    icon: (
+      <>
+        <path d="M4 5.5h14v9H9l-4 3.2v-3.2H4z" />
+        <path d="M8 9.2h6M8 11.6h4" />
+      </>
+    ),
+  },
+  {
+    title: 'Paperwork done for you',
+    body: 'Data entry, invoices and the weekly report, done without anyone retyping them.',
+    icon: (
+      <>
+        <path d="M6 3.5h7l3.5 3.5v11.5H6z" />
+        <path d="M13 3.5V7h3.5M8.6 11h5.8M8.6 14h5.8" />
+      </>
+    ),
+  },
+  {
+    title: 'Your tools connected',
+    body: 'Your CRM, email and accounting software pass information to each other by themselves.',
+    icon: (
+      <>
+        <path d="M9.5 12.5l3-3" />
+        <path d="M8.2 8.8l-2 2a2.9 2.9 0 0 0 4.1 4.1l2-2" />
+        <path d="M13.8 13.2l2-2a2.9 2.9 0 0 0-4.1-4.1l-2 2" />
+      </>
+    ),
+  },
+];
+
+/** What owners can hold us to. Each one is already promised in the ads. */
+const REASONS = [
+  { title: 'Fixed in 24 to 48 hours', body: 'Tell us something broke. It is fixed within 24 to 48 hours.' },
+  { title: 'Hours back in week one', body: 'Most teams notice hours coming back inside the first week.' },
+  { title: 'Built around your business', body: 'Custom built and connected to the tools you already use. Not a template.' },
+  { title: 'One named developer', body: 'The same person owns your job from start to finish.' },
+  { title: 'Updates without asking', body: 'Regular updates, whether or not there is good news that week.' },
+  { title: 'Based in Burlington', body: 'A real office at 1440 Grahams Lane, Burlington, Ontario.' },
+];
 
 export default async function VariantPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -57,193 +118,164 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
       <Masthead />
 
       <main>
-        {/* ---------- the board ---------- */}
-        <section className="board">
+        {/* ---------- hero ---------- */}
+        <section className="hero">
+          <div className="shell hero-in">
+            <TrackedLink href={REVIEWS.link} event={REVIEWS.event} place="hero" className="proof" newTab>
+              <Stars />
+              <span>
+                <b>{REVIEWS.rating}</b> on Google
+              </span>
+              <span className="proof-dot" aria-hidden="true">
+                ·
+              </span>
+              <span>Burlington, Ontario</span>
+            </TrackedLink>
+            <h1 className="hero-h">
+              <Headline text={v.h1} accent={v.accent} />
+            </h1>
+            <p className="hero-sub">{v.sub}</p>
+            <div className="cta-block">
+              <TrackedLink href="#board" event="cta_click" place="hero" className="btn btn-lg">
+                {CTA}
+              </TrackedLink>
+              <p className="cta-note">{CTA_NOTE}</p>
+            </div>
+          </div>
+
+          {/* ---------- what we take off your team ---------- */}
           <div className="shell">
-            <div className="board-head">
-              <h1 className="display board-h1">{v.h1}</h1>
-              <p className="board-sub" dangerouslySetInnerHTML={{ __html: v.sub }} />
-            </div>
-
-            <div className="cols">
-              <div className="col">
-                <div className="col-head">
-                  <span className="stencil">Flagged</span>
-                  <span className="stencil count">Yours</span>
-                </div>
-                <div className="slot place" id="board">
-                  <h2 className="slot-title">{v.slotTitle}</h2>
-                  <p className="slot-note">{v.slotNote}</p>
-                  {/* For the visitor who will not fill in a form. It sits above
-                      the fields so it is found without scrolling, and stays
-                      quiet so the form is still the ask: no orange block here. */}
-                  <DirectLines place="form" ask="Rather talk than type? Call or email one of us." />
-                  <LeadForm variant={v} />
-                </div>
-              </div>
-
-              <div className="col">
-                <div className="col-head">
-                  <span className="stencil">In hand</span>
-                  <span className="stencil count">{v.inHand.length}</span>
-                </div>
-                {v.inHand.map((c) => (
-                  <Card key={c.title} card={c} />
+            <div className="jobs-panel" id="what">
+              <h2 className="jobs-h" data-reveal>
+                What we take off your team
+              </h2>
+              <ul className="jobs">
+                {JOBS.map((j) => (
+                  <li key={j.title} className="job">
+                    <span className="job-icon" aria-hidden="true">
+                      <svg viewBox="0 0 22 22" width="22" height="22">
+                        <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                          {j.icon}
+                        </g>
+                      </svg>
+                    </span>
+                    <div>
+                      <h3 className="job-h">{j.title}</h3>
+                      <p className="job-p">{j.body}</p>
+                    </div>
+                  </li>
                 ))}
-              </div>
-
-              <div className="col">
-                <div className="col-head">
-                  <span className="stencil">Fixed</span>
-                  <span className="stencil count">
-                    {v.fixed.filter((c) => !c.placeholder || process.env.NODE_ENV !== 'production')
-                      .length}
-                  </span>
-                </div>
-                {/* A card whose figure has not been supplied yet is visible while
-                    developing and never in production. A visitor should see one
-                    fewer card, never a flag telling them a number is missing. */}
-                {v.fixed
-                  .filter((c) => !c.placeholder || process.env.NODE_ENV !== 'production')
-                  .map((c) => (
-                    <Card key={c.title} card={c} closed />
-                  ))}
-              </div>
+              </ul>
             </div>
-
-            <p className="rule-line">
-              <span>Nothing sits in Flagged longer than</span> <b>48 hours.</b>
-            </p>
           </div>
         </section>
 
-        {/* ---------- how a job moves ---------- */}
-        {/* The section ids are ad sitelink targets. Renaming one breaks a
-            sitelink silently: the page still loads, it just stops scrolling. */}
+        {/* The section ids are ad sitelink targets (#how, #promise, #questions,
+            #board). Renaming one breaks a sitelink silently: the page still
+            loads, it just stops scrolling. */}
+
+        {/* ---------- how it works ---------- */}
         <section className="band" id="how">
           <div className="shell">
-            <h2 className="band-h">How a job moves across the board</h2>
-            <p className="band-lede">
-              Three states, and you can see which one your work is in at any point. That is the whole
-              method, and it is the part most agencies leave out.
-            </p>
-            <div className="stages">
-              <div className="stage">
-                <p className="stencil stage-k">Flagged</p>
-                <h3 className="stage-h">You tell us what is eating the time</h3>
-                <p className="stage-p">
-                  A 30 minute call, free, no pitch deck. We work out whether the job is worth
-                  automating at all. Sometimes the answer is no, and we say so.
-                </p>
-              </div>
-              <div className="stage">
-                <p className="stencil stage-k">In hand</p>
-                <h3 className="stage-h">It gets built, with a name against it</h3>
-                <p className="stage-p">
-                  One of four developers owns it start to finish. Custom, integrated with the tools
-                  you already run. You get updates without asking for them.
-                </p>
-              </div>
-              <div className="stage">
-                <p className="stencil stage-k">Fixed</p>
-                <h3 className="stage-h">It keeps running, and we keep answering</h3>
-                <p className="stage-p">
-                  Flag a glitch and it is addressed within 48 hours. Not a ticket number, not a
-                  different person each time. The same team who built it.
-                </p>
-              </div>
+            <h2 className="band-h" data-reveal>
+              How it works
+            </h2>
+            <p className="band-lede">Four stages. You can see which one your job is in at any point.</p>
+            <ProcessBoard />
+            <div className="cta-block cta-left">
+              <TrackedLink href="#board" event="cta_click" place="how" className="btn">
+                {CTA}
+              </TrackedLink>
+              <p className="cta-note">{CTA_NOTE}</p>
             </div>
           </div>
         </section>
 
-        {/* ---------- what we commit to ---------- */}
-        <section className="band alt" id="promise">
+        {/* ---------- why owners pick us ---------- */}
+        <section className="band soft" id="promise">
           <div className="shell">
-            <h2 className="band-h">What is actually promised</h2>
+            <h2 className="band-h" data-reveal>
+              Why owners pick Genovation
+            </h2>
             <p className="band-lede">
-              Four things, in writing, all of them beatable in practice. We would rather promise less
-              and hand over more.
+              A small team in Burlington, Ontario. We build around how your business works, then we
+              stay to look after it.
             </p>
-            <ul className="spec">
-              <li>
-                <span className="stencil k">Built custom</span>
-                <span className="v">
-                  Built around your business, integrated with the tools you already run.
-                  <span>
-                    No templated bot, and nothing you are locked out of later. If you ever want to
-                    take it in house, you can see how all of it works.
-                  </span>
-                </span>
-              </li>
-              <li>
-                <span className="stencil k">48 hours</span>
-                <span className="v">
-                  Glitches addressed within 24 to 48 hours of you flagging them.
-                  <span>
-                    Measured from when you flag it, not from when we get round to reading it.
-                  </span>
-                </span>
-              </li>
-              <li>
-                <span className="stencil k">Week one</span>
-                <span className="v">
-                  Most teams notice hours coming back inside the first week.
-                  <span>
-                    Not the whole project finished in a week. The first noticeable difference, in a
-                    week.
-                  </span>
-                </span>
-              </li>
-              <li>
-                <span className="stencil k">No silence</span>
-                <span className="v">
-                  Regular updates, whether or not there is good news that week.
-                  <span>
-                    You will not have to ask where things are. This is the commitment we are most
-                    often hired over.
-                  </span>
-                </span>
-              </li>
-            </ul>
+            <div className="reasons">
+              <TrackedLink
+                href={REVIEWS.link}
+                event={REVIEWS.event}
+                place="promise"
+                className="reason reason-google"
+                newTab
+              >
+                <Stars />
+                <span className="reason-big">{REVIEWS.rating}</span>
+                <span className="reason-h">on Google</span>
+                <span className="reason-link">Read our reviews</span>
+              </TrackedLink>
+              {REASONS.map((r) => (
+                <div key={r.title} className="reason">
+                  <h3 className="reason-h">{r.title}</h3>
+                  <p className="reason-p">{r.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* ---------- objections ---------- */}
-        <section className="band" id="questions">
+        {/* ---------- the form ---------- */}
+        <section className="band" id="board">
+          <div className="shell form-grid">
+            <div className="form-side">
+              <h2 className="band-h" data-reveal>
+                Tell us one task that eats your team’s time
+              </h2>
+              <p className="band-lede">{v.formNote}</p>
+              {/* For the visitor who will not fill in a form. Kept quiet, so the
+                  form is still the ask. */}
+              <DirectLines place="form" ask="Rather talk than type? Call or email one of us." />
+            </div>
+            <div className="form-card">
+              <LeadForm variant={v} />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- questions ---------- */}
+        <section className="band soft" id="questions">
           <div className="shell">
-            <h2 className="band-h">The four questions everybody asks</h2>
+            <h2 className="band-h" data-reveal>
+              The four questions everybody asks
+            </h2>
             <div className="qa">
               <div>
-                <h3 className="qa-q">Will this actually work for my specific workflow?</h3>
+                <h3 className="qa-q">Will this work for my business?</h3>
                 <p className="qa-a">
-                  That is what the call is for. Your process gets looked at before anything is
-                  quoted, because a workflow nobody understood yet cannot be priced honestly. If it
-                  is not worth automating, you will hear that on the call rather than after an
-                  invoice.
+                  That is what the free call is for. We look at how the task runs today before we
+                  quote anything. If it is not worth automating, we tell you on the call, not after
+                  an invoice.
                 </p>
               </div>
               <div>
-                <h3 className="qa-q">What happens when it breaks?</h3>
+                <h3 className="qa-q">What happens when something breaks?</h3>
                 <p className="qa-a">
-                  Things do break. Integrations change, a supplier alters a form, a system updates.
-                  Flag it and it is addressed within 24 to 48 hours by the person who built it. That
-                  is the whole reason the board has a Fixed column instead of an end date.
+                  Things change: a supplier alters a form, a system updates. Tell us and it is fixed
+                  within 24 to 48 hours, by the person who built it.
                 </p>
               </div>
               <div>
                 <h3 className="qa-q">Will you disappear once you have been paid?</h3>
                 <p className="qa-a">
-                  It is the fair question, and most people asking it have been burned before. There
-                  are six of us and we are in Burlington. The work is documented as it is built, so
-                  nothing depends on one person staying reachable.
+                  No. The team who built it looks after it, and you get updates without asking. The
+                  work is documented as it is built, so nothing depends on one person.
                 </p>
               </div>
               <div>
                 <h3 className="qa-q">What does it cost?</h3>
                 <p className="qa-a">
-                  It depends entirely on the job, which is why there is no price on this page. You
-                  will get a number after the call, once there is something real to price. The call
-                  itself costs nothing.
+                  It depends on the job, so there is no price on this page. You get a price after the
+                  call, once there is something real to price. The call itself costs nothing.
                 </p>
               </div>
             </div>
@@ -251,9 +283,11 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         </section>
 
         {/* ---------- where we are ---------- */}
-        <section className="band alt" id="find">
+        <section className="band" id="find">
           <div className="shell">
-            <h2 className="band-h">Where to find us</h2>
+            <h2 className="band-h" data-reveal>
+              Where to find us
+            </h2>
             <p className="band-lede">
               One office in Burlington, and two phones. Each number rings a founder directly, not a
               call centre.
@@ -326,14 +360,21 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         {/* ---------- close ---------- */}
         <section className="close-band">
           <div className="shell">
-            <h2 className="display close-h">{v.closeH}</h2>
-            <p className="close-p">
-              Book a free 30 minute call. Bring one repetitive job that annoys you. That is enough to
-              work out whether there is anything here worth doing.
-            </p>
-            <a className="close-btn" href="#board">
-              Put it on the board
-            </a>
+            <div className="close-panel">
+              <h2 className="close-h" data-reveal>
+                {v.closeH}
+              </h2>
+              <p className="close-p">
+                Bring one repetitive job that annoys you. That is enough to work out whether there is
+                anything here worth doing.
+              </p>
+              <div className="cta-block">
+                <TrackedLink href="#board" event="cta_click" place="close" className="close-btn">
+                  {CTA}
+                </TrackedLink>
+                <p className="cta-note">{CTA_NOTE}</p>
+              </div>
+            </div>
           </div>
         </section>
       </main>

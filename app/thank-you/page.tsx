@@ -62,16 +62,23 @@ export default async function ThankYou({
 
   return (
     <>
-      <Masthead />
+      <Masthead cta={false} />
 
       <main className="booked">
         <div className="shell">
-          <p className="stencil booked-tag">On the board</p>
-          <h1 className="display booked-h">Your card is up. Now pick a time.</h1>
-          <p className="booked-p">
-            We have your details, so the call happens either way. Choosing a slot below just means
-            you get it on your terms instead of ours. Thirty minutes, no pitch deck.
-          </p>
+          <div className="booked-head">
+            <p className="booked-tag">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path d="M4 8.5l2.6 2.6L12 5.6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              We have your details
+            </p>
+            <h1 className="booked-h">Thank you. Now pick a time for your call.</h1>
+            <p className="booked-p">
+              The call happens either way. Choosing a slot below just means you get it at a time that
+              suits you. Thirty minutes, no slides, no pitch.
+            </p>
+          </div>
           <div className="booked-call">
             <DirectLines place="thank_you" ask="Or skip the calendar and call or email one of us now." />
           </div>

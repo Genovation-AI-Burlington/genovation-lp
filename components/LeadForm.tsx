@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { captureAttribution, readAttribution } from '@/lib/attribution';
-import type { Variant } from '@/lib/variants';
+import { CTA, type Variant } from '@/lib/variants';
 import { normalizePhone } from '@/lib/phone';
 import { track } from '@/lib/analytics';
 
@@ -43,7 +43,7 @@ export default function LeadForm({ variant }: { variant: Variant }) {
     const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
 
     const next: Errors = {};
-    if (!data.name?.trim()) next.name = 'We need a name to put on the card.';
+    if (!data.name?.trim()) next.name = 'We need your name.';
     if (!EMAIL.test(data.email?.trim() || '')) next.email = 'Check this address, we cannot reach you without it.';
     if ((data.phone?.replace(/\D/g, '').length || 0) < 10) next.phone = 'Ten digits, so we can call at the time you pick.';
     if (!data.task?.trim()) next.task = 'One line is enough. This is what the call is about.';
@@ -142,7 +142,7 @@ export default function LeadForm({ variant }: { variant: Variant }) {
       </label>
 
       <button className="btn" type="submit" disabled={sending}>
-        {sending ? 'Putting it on the board' : 'Put it on the board'}
+        {sending ? 'Sending' : CTA}
       </button>
 
       {failed && <p className="form-error">{failed}</p>}

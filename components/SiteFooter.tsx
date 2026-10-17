@@ -1,13 +1,18 @@
 import TrackedLink from '@/components/TrackedLink';
-import { GENERAL, OFFICE } from '@/lib/contact';
+import { GENERAL, MAIN_SITE, OFFICE } from '@/lib/contact';
 
-/** The footer on every page: the address, the general email, what we do. */
+/** The footer on every page: the name, the address, the general email, what we do. */
 export default function SiteFooter() {
   return (
     <footer className="foot">
       <div className="shell foot-in">
+        <span className="foot-brand">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/genovation-g.png" alt="" width={20} height={21} />
+          Genovation AI
+        </span>
         <span>
-          Genovation AI, {OFFICE.street}, {OFFICE.city}
+          {OFFICE.street}, {OFFICE.city}
         </span>
         <TrackedLink
           href={`mailto:${GENERAL.email}`}
@@ -17,6 +22,9 @@ export default function SiteFooter() {
           label={`Email Genovation AI at ${GENERAL.email}`}
         >
           {GENERAL.email}
+        </TrackedLink>
+        <TrackedLink href={MAIN_SITE} event="site_open" place="footer" className="foot-link" newTab>
+          genovation.ai
         </TrackedLink>
         <span>Custom automation, voice agents, and internal tools.</span>
       </div>

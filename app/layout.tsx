@@ -1,41 +1,32 @@
 import type { Metadata, Viewport } from 'next';
-import { Archivo } from 'next/font/google';
+import { Geist } from 'next/font/google';
 import GoogleTags from '@/components/GoogleTags';
 import PageAnalytics from '@/components/PageAnalytics';
 import './globals.css';
 
 /**
- * One family, two widths. Archivo descends from American gothic signage, which
- * is the lettering this world is actually made of: painted column heads and
- * stamped card labels. Self-hosted by next/font, so no third-party font request
- * on a page whose speed Google scores directly.
+ * One family for headings and text. Geist is a plain, even grotesque: it reads
+ * as a working company rather than a costume. Self-hosted by next/font, so no
+ * third-party font request on a page whose speed Google scores directly.
  */
-const archivo = Archivo({
+const geist = Geist({
   subsets: ['latin'],
-  axes: ['wdth'],
   display: 'swap',
-  variable: '--font-archivo',
+  variable: '--font-geist',
 });
 
 /** Direction contract. Emitted into the built HTML so it can be audited. */
 const CONTRACT = `
 <!--
-IMPECCABLE DIRECTION CONTRACT  ·  seed 690a21b3  ·  persuade
-THESIS: A visitor's fear here is not "will it work", it is "will they vanish once
-  they are paid". This page answers that with its structure, not a sentence
-  claiming reliability. It refuses the category default: centred hero, three icon
-  cards, a form at the bottom.
-OWN-WORLD: The steel job board in a service company's back office. Painted navy
-  ground, cream enamel job cards with hard keylines, stencilled condensed column
-  heads, one signal orange used only where something can be done.
-STORY: Every job on this board has an owner and a state. Mine would too. I write
-  my task on the blank card and it joins the board.
-FIRST VIEWPORT: Masthead, then an H1 carrying the ad group's keyword inside a real
-  sentence, then three columns, FLAGGED / IN HAND / FIXED. The blank card and its
-  form sit first in FLAGGED, top left, where reading starts. The 48 hour rule
-  closes the board.
-FORM: Dispatch board. Candidate 5 of 7 on the grounded list, assigned by seed 690a21b3.
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+DIRECTION CONTRACT  ·  revamp of 17 Oct 2026  ·  persuade
+THESIS: A business owner who clicked an ad decides in seconds whether this is a
+  real company. The page proves that before it asks for anything: a real rating,
+  a real office, real names and numbers, and the work shown as a process.
+FIRST VIEWPORT: proof line, the H1 carrying the ad group's keyword inside a real
+  sentence, one line on what we do, one button and what the call costs.
+PEAK: the process board. Four stages, and each step is checked off as you scroll.
+RULES: real facts only, no invented numbers, no client stories, one accent (the
+  blue of the Genovation logo), light motion that stops when the device asks.
 -->
 `;
 
@@ -48,14 +39,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1A2331',
+  themeColor: '#FFFFFF',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-CA" className={archivo.variable}>
+    <html lang="en-CA" className={geist.variable}>
       <body>
         <div hidden dangerouslySetInnerHTML={{ __html: CONTRACT }} />
         <GoogleTags />

@@ -40,6 +40,22 @@ export const GENERAL = { email: 'contact@genovation.ai', event: 'email_contact' 
  */
 export const MAIN_SITE = 'https://genovation.ai';
 
+/**
+ * The Google Business Profile rating, shown as proof above the H1 and in the
+ * "why owners pick us" section. Read by hand from the listing on 17 Oct 2026:
+ * 5.0 stars from 8 reviews. It is typed here, not fetched, so it has to be
+ * checked against the listing again whenever a review comes in. A rating on
+ * this page that the listing contradicts is worse than no rating at all.
+ *
+ * The link is the same listing as the office map. It shows the rating and the
+ * reviews under it.
+ */
+export const REVIEWS = {
+  rating: '5.0',
+  link: 'https://maps.app.goo.gl/3ZhQy1bdu8TCR9b4A',
+  event: 'reviews_open',
+} as const;
+
 /** How a line is written wherever it is shown: the name, a hyphen, the number. */
 export const lineText = (l: { who: string; shown: string }) => `${l.who} - ${l.shown}`;
 
