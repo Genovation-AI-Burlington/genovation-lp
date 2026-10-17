@@ -319,16 +319,6 @@ p { text-wrap: pretty; }
    How it works: the process board
    ========================================================================== */
 
-/* On a wide, tall enough screen the heading and the board stay on screen while
-   the visitor scrolls through the room under them; ProcessBoard turns that
-   scroll into checked steps. The conditions must match PINNED in
-   ProcessBoard.tsx. Anywhere else the room is zero and nothing is pinned. */
-.how-room { height: 0; }
-@media (min-width: 981px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
-  .how-pin { position: sticky; top: 88px; }
-  .how-room { height: calc(var(--steps, 12) * var(--px-per-step, 80px)); }
-}
-
 .board {
   margin-top: 40px;
   display: grid;

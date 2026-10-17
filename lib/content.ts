@@ -72,14 +72,17 @@ export const STAGES: { name: string; steps: string[] }[] = [
 ];
 
 /**
- * How fast the board follows the scroll.
+ * How fast the board follows the scroll. Nothing is pinned; the page scrolls
+ * normally.
  *
- * `pxPerStep`: on a wide screen the section stays on screen while the visitor
- * scrolls this many pixels per step (12 steps x 80 = 960 px). Bigger is slower.
- * `line`: on a phone, a step is checked when its middle passes this share of
- * the screen height from the top (0.7 = 70% down). Smaller is later.
+ * Wide screens: a step is checked for every `pxPerStep` pixels scrolled after
+ * the top of the board passes `startAt` of the screen height (0.85 = 85% down).
+ * 12 steps x 64 = 768 px of scroll. Bigger is slower. (Was 80 while pinned;
+ * Ali asked for a bit faster on 18 Oct 2026.)
+ * Phones and tablets: a step is checked when its middle passes `line` of the
+ * screen height (0.7 = 70% down). Smaller is later.
  */
-export const BOARD_PACE = { pxPerStep: 80, line: 0.7 };
+export const BOARD_PACE = { pxPerStep: 64, startAt: 0.85, line: 0.7 };
 
 /** "Why owners pick Genovation". Each one is already promised in the live ads. */
 export const REASONS: { title: string; body: string }[] = [
