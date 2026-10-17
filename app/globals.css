@@ -111,7 +111,7 @@ a { color: inherit; }
   gap: 16px;
   padding-block: 16px;
 }
-.brand { display: flex; align-items: center; gap: 11px; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; }
 .brand svg { width: 30px; height: 30px; }
 .brand-name {
   font-stretch: 80%;
@@ -127,7 +127,37 @@ a { color: inherit; }
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
-@media (max-width: 420px) { .masthead-note { font-size: 0.78rem; } }
+/* the way back to the company. Same signal underline as every other thing on
+   this page that can be done, so it reads as a link without shouting. */
+.masthead-side {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px 20px;
+  text-align: right;
+}
+.masthead-site {
+  color: var(--enamel);
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: var(--signal);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  padding-block: 4px;
+  transition: color 140ms linear;
+}
+.masthead-site:hover { color: var(--signal); }
+/* on a phone the two stack on the right, so neither is dropped */
+@media (max-width: 560px) {
+  .masthead-side { flex-direction: column; align-items: flex-end; gap: 2px; }
+  .masthead-note, .masthead-site { font-size: 0.78rem; }
+}
+@media (max-width: 380px) {
+  .brand { gap: 9px; }
+  .brand-name { letter-spacing: 0.14em; font-size: 0.76rem; }
+}
 
 /* ==========================================================================
    The board. First viewport.
@@ -280,14 +310,15 @@ a { color: inherit; }
 .lines-strip { margin-bottom: 18px; }
 .lines-ask { color: var(--dim); font-size: 0.86rem; line-height: 1.4; margin-bottom: 8px; }
 .lines-row { border-top: 1px solid var(--line-firm); }
-/* One line each, "Faisal - 289 455 5552", and 46px tall on purpose: two numbers
-   stacked on a phone are easy to mis-tap if they are only as tall as the text. */
+/* Each founder gets one ruled row: "Faisal - +1 (289) 455-5552" and their email
+   under it. Both are their own tap target, padded well past the height of the
+   text, because two small links stacked on a phone are easy to mis-tap. */
+.person { padding-block: 4px 6px; border-bottom: 1px solid var(--line); }
 .line {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 46px;
-  border-bottom: 1px solid var(--line);
+  min-height: 38px;
   text-decoration: none;
   font-stretch: 88%;
   font-size: 1.04rem;
@@ -306,6 +337,18 @@ a { color: inherit; }
   transition: color 140ms linear;
 }
 .line:hover .line-num { color: var(--signal); }
+.line-mail {
+  display: inline-block;
+  padding-block: 5px;
+  color: var(--dim);
+  font-size: 0.88rem;
+  text-decoration: underline;
+  text-decoration-color: var(--line-firm);
+  text-underline-offset: 3px;
+  transition: color 140ms linear;
+}
+.line-mail:hover { color: var(--enamel); text-decoration-color: var(--signal); }
+@media (max-width: 360px) { .line { font-size: 0.96rem; } }
 
 .field { display: block; margin-bottom: 13px; }
 .field > span {
@@ -477,10 +520,41 @@ a { color: inherit; }
 .find-dash { color: var(--dim-2); }
 .find-num { font-weight: 700; color: var(--enamel); transition: color 140ms linear; }
 .find-line:hover .find-num { color: var(--signal); }
+.find-mail {
+  display: block;
+  width: fit-content;
+  margin-top: 4px;
+  padding-block: 5px;
+  color: var(--dim);
+  font-size: 1rem;
+  text-decoration: underline;
+  text-decoration-color: var(--line-firm);
+  text-underline-offset: 3px;
+  transition: color 140ms linear;
+}
+.find-mail:hover { color: var(--enamel); text-decoration-color: var(--signal); }
+.find-general {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.4em;
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+}
+.find-general .find-who { font-weight: 600; }
+.find-general-mail {
+  color: var(--enamel);
+  font-weight: 600;
+  padding-block: 5px;
+  text-decoration: underline;
+  text-decoration-color: var(--signal);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: color 140ms linear;
+}
+.find-general-mail:hover { color: var(--signal); }
 @media (max-width: 360px) { .find-line { font-size: 1.3rem; } }
 .find-addr { color: var(--enamel); font-size: clamp(1rem, 1.5vw, 1.12rem); line-height: 1.5; }
-.find-open,
-.tel {
+.find-open {
   color: var(--enamel);
   font-weight: 600;
   white-space: nowrap;
@@ -490,8 +564,7 @@ a { color: inherit; }
   text-underline-offset: 4px;
   transition: color 140ms linear;
 }
-.find-open:hover,
-.tel:hover { color: var(--signal); }
+.find-open:hover { color: var(--signal); }
 .find-open { display: block; width: fit-content; margin-top: 8px; padding-block: 8px; font-size: 0.95rem; }
 
 /* The frame holds its size before the map exists, so nothing below it jumps
@@ -555,6 +628,8 @@ a { color: inherit; }
 /* footer */
 .foot { padding-block: 30px 44px; color: var(--dim-2); font-size: 0.86rem; }
 .foot-in { display: flex; flex-wrap: wrap; gap: 8px 26px; justify-content: space-between; }
+.foot-link { color: var(--dim); text-decoration: underline; text-decoration-color: var(--line-firm); text-underline-offset: 3px; }
+.foot-link:hover { color: var(--enamel); text-decoration-color: var(--signal); }
 
 /* ==========================================================================
    Thank you / booking
@@ -565,9 +640,8 @@ a { color: inherit; }
 .booked-h { font-stretch: 78%; font-weight: 700; font-size: clamp(1.9rem, 4.4vw, 3.1rem); line-height: 1.03; letter-spacing: -0.018em; max-width: 20ch; margin-bottom: 16px; }
 .booked-p { color: var(--dim); max-width: 56ch; font-size: clamp(1rem, 1.5vw, 1.15rem); margin-bottom: 32px; }
 /* a second way through, said once and quietly: the calendar is still the ask */
-.booked-call { color: var(--dim); font-size: 1rem; line-height: 1.5; margin: -20px 0 26px; }
-/* padded so each number is a fair target for a thumb, not an 18px line of text */
-.booked-call .tel { display: inline-block; padding-block: 9px; }
+.booked-call { max-width: 420px; margin: -14px 0 30px; }
+.booked-call .lines-strip { margin-bottom: 0; }
 /* Taller than the widget's tallest step on purpose. GoHighLevel's embed script
    overrides this inline once it loads; this height is what a visitor gets if
    that script is blocked, and it has to keep the confirm button reachable. */

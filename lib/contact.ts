@@ -1,18 +1,44 @@
 /**
- * The two direct lines and the office.
+ * The two direct lines, the general address, the office, and the main site.
  *
- * One file, because the numbers appear in three places (beside the form, in the
- * office section, on the thank-you page) and a number that is right in two of
- * them and stale in the third is worse than no number at all.
+ * One file, because these appear in several places (the top bar, beside the
+ * form, in the office section, on the thank-you page, in the footer) and a
+ * number or address that is right in two of them and stale in a third is worse
+ * than none at all.
  *
- * `event` is the GA4 event name for a tap on that line. One name per person,
- * rather than one event with a parameter, so the split reads straight off the
- * Events list without anybody registering a custom dimension first.
+ * `event` and `emailEvent` are the GA4 event names for a tap on that line. One
+ * name per person and per channel, rather than one event with a parameter, so
+ * the split reads straight off the Events list without anybody registering a
+ * custom dimension first. The phone event names are unchanged from 13 Oct 2026,
+ * so the counts carry on from before the format changed.
  */
 export const LINES = [
-  { who: 'Faisal', tel: '+12894555552', shown: '289 455 5552', event: 'call_faisal' },
-  { who: 'Jamal', tel: '+12897003394', shown: '289 700 3394', event: 'call_jamal' },
+  {
+    who: 'Faisal',
+    tel: '+12894555552',
+    shown: '+1 (289) 455-5552',
+    event: 'call_faisal',
+    email: 'faisal.a@genovation.ai',
+    emailEvent: 'email_faisal',
+  },
+  {
+    who: 'Jamal',
+    tel: '+12897003394',
+    shown: '+1 (289) 700-3394',
+    event: 'call_jamal',
+    email: 'jamal.h@genovation.ai',
+    emailEvent: 'email_jamal',
+  },
 ] as const;
+
+/** For anyone who would rather not write to one named person. */
+export const GENERAL = { email: 'contact@genovation.ai', event: 'email_contact' } as const;
+
+/**
+ * The company's own site. The landing page read as a stranger's page with no
+ * way back to Genovation (Jamal, 16 Oct 2026), so the top bar links here.
+ */
+export const MAIN_SITE = 'https://genovation.ai';
 
 /** How a line is written wherever it is shown: the name, a hyphen, the number. */
 export const lineText = (l: { who: string; shown: string }) => `${l.who} - ${l.shown}`;

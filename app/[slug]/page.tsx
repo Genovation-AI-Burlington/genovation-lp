@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import DirectLines from '@/components/DirectLines';
 import LeadForm from '@/components/LeadForm';
-import Mark from '@/components/Mark';
+import Masthead from '@/components/Masthead';
 import OfficeMap from '@/components/OfficeMap';
+import SiteFooter from '@/components/SiteFooter';
 import TrackedLink from '@/components/TrackedLink';
-import { LINES, OFFICE } from '@/lib/contact';
+import { GENERAL, LINES, OFFICE } from '@/lib/contact';
 import { bySlug, SLUGS, type JobCard } from '@/lib/variants';
 
 export const dynamicParams = false;
@@ -52,15 +54,7 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <header className="masthead">
-        <div className="shell masthead-in">
-          <div className="brand">
-            <Mark />
-            <span className="brand-name">Genovation AI</span>
-          </div>
-          <span className="masthead-note">Burlington, Ontario</span>
-        </div>
-      </header>
+      <Masthead />
 
       <main>
         {/* ---------- the board ---------- */}
@@ -83,27 +77,7 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
                   {/* For the visitor who will not fill in a form. It sits above
                       the fields so it is found without scrolling, and stays
                       quiet so the form is still the ask: no orange block here. */}
-                  <div className="lines-strip">
-                    <p className="lines-ask">Rather talk than type? Call one of us.</p>
-                    <div className="lines-row">
-                      {LINES.map((l) => (
-                        <TrackedLink
-                          key={l.who}
-                          href={`tel:${l.tel}`}
-                          event={l.event}
-                          place="form"
-                          className="line"
-                          label={`Call ${l.who} at ${l.shown}`}
-                        >
-                          <span className="line-who">{l.who}</span>
-                          <span className="line-dash" aria-hidden="true">
-                            -
-                          </span>
-                          <span className="line-num">{l.shown}</span>
-                        </TrackedLink>
-                      ))}
-                    </div>
-                  </div>
+                  <DirectLines place="form" ask="Rather talk than type? Call or email one of us." />
                   <LeadForm variant={v} />
                 </div>
               </div>
@@ -301,8 +275,32 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
                       </span>
                       <span className="find-num">{l.shown}</span>
                     </TrackedLink>
+                    <TrackedLink
+                      href={`mailto:${l.email}`}
+                      event={l.emailEvent}
+                      place="office"
+                      className="find-mail"
+                      label={`Email ${l.who} at ${l.email}`}
+                    >
+                      {l.email}
+                    </TrackedLink>
                   </li>
                 ))}
+                <li className="find-general">
+                  <span className="find-who">General enquiries</span>
+                  <span className="find-dash" aria-hidden="true">
+                    -
+                  </span>
+                  <TrackedLink
+                    href={`mailto:${GENERAL.email}`}
+                    event={GENERAL.event}
+                    place="office"
+                    className="find-general-mail"
+                    label={`Email Genovation AI at ${GENERAL.email}`}
+                  >
+                    {GENERAL.email}
+                  </TrackedLink>
+                </li>
                 <li>
                   <span className="find-addr">
                     {OFFICE.street}
@@ -340,14 +338,7 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
         </section>
       </main>
 
-      <footer className="foot">
-        <div className="shell foot-in">
-          <span>
-            Genovation AI, {OFFICE.street}, {OFFICE.city}
-          </span>
-          <span>Custom automation, voice agents, and internal tools.</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
