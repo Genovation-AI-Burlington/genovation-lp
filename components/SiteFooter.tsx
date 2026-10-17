@@ -1,7 +1,7 @@
 import TrackedLink from '@/components/TrackedLink';
 import { GENERAL, MAIN_SITE, OFFICE } from '@/lib/contact';
 
-/** The footer on every page: the name, the address, the general email, what we do. */
+/** The footer on every page: the name, the address, the general email, the main site. */
 export default function SiteFooter() {
   return (
     <footer className="foot">
@@ -26,7 +26,6 @@ export default function SiteFooter() {
         <TrackedLink href={MAIN_SITE} event="site_open" place="footer" className="foot-link" newTab>
           genovation.ai
         </TrackedLink>
-        <span>Custom automation, voice agents, and internal tools.</span>
       </div>
     </footer>
   );

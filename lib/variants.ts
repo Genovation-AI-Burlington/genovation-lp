@@ -22,7 +22,6 @@ export type Variant = {
   /** what the visitor is asked to describe, phrased in their own words */
   taskLabel: string;
   taskPlaceholder: string;
-  closeH: string;
 };
 
 export const VARIANTS: Variant[] = [
@@ -38,7 +37,6 @@ export const VARIANTS: Variant[] = [
     formNote: 'We will talk it through with you on a free 30 minute call.',
     taskLabel: 'What repetitive job eats the most time?',
     taskPlaceholder: 'e.g. someone rekeys every order into two systems by hand',
-    closeH: 'The nearest automation company is not the point. The one still answering in month six is.',
   },
   {
     slug: 'business-automation',
@@ -52,7 +50,6 @@ export const VARIANTS: Variant[] = [
     formNote: 'We will talk it through with you on a free 30 minute call.',
     taskLabel: 'What repetitive job eats the most time?',
     taskPlaceholder: 'e.g. the same report rebuilt by hand every Monday morning',
-    closeH: 'Automation is easy to buy. Automation somebody still looks after is not.',
   },
   {
     slug: 'business-process-automation',
@@ -66,7 +63,6 @@ export const VARIANTS: Variant[] = [
     formNote: 'We will map it with you on a free 30 minute call.',
     taskLabel: 'Which process has the most manual steps in it?',
     taskPlaceholder: 'e.g. order comes in, gets rekeyed, approved, then rekeyed again',
-    closeH: 'A process you cannot see is a process nobody can fix.',
   },
   {
     slug: 'ai-automation-agency',
@@ -80,7 +76,6 @@ export const VARIANTS: Variant[] = [
     formNote: 'We will talk it through with you on a free 30 minute call.',
     taskLabel: 'What repetitive job eats the most time?',
     taskPlaceholder: 'e.g. the same list of customers followed up by hand every month',
-    closeH: 'Plenty of agencies will build it. Fewer will still be answering in month six.',
   },
 ];
 

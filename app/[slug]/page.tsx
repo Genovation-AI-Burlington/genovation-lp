@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import DirectLines from '@/components/DirectLines';
+import JobIcon from '@/components/JobIcon';
 import LeadForm from '@/components/LeadForm';
 import Masthead from '@/components/Masthead';
 import OfficeMap from '@/components/OfficeMap';
@@ -8,6 +9,7 @@ import ProcessBoard from '@/components/ProcessBoard';
 import SiteFooter from '@/components/SiteFooter';
 import TrackedLink from '@/components/TrackedLink';
 import { GENERAL, LINES, OFFICE, REVIEWS } from '@/lib/contact';
+import { CLOSE, JOBS, REASONS } from '@/lib/content';
 import { bySlug, CTA, CTA_NOTE, SLUGS } from '@/lib/variants';
 
 export const dynamicParams = false;
@@ -56,58 +58,6 @@ function Stars() {
   );
 }
 
-/** The four kinds of work, each with a plain line icon drawn for this page. */
-const JOBS = [
-  {
-    title: 'Calls and messages answered',
-    body: 'A phone or chat agent answers, takes the details and books the call, day or night.',
-    icon: (
-      <path d="M6.6 3.5h2.6l1.4 3.6-1.9 1.2a9 9 0 0 0 4.9 4.9l1.2-1.9 3.6 1.4v2.6a1.6 1.6 0 0 1-1.7 1.6A13.4 13.4 0 0 1 5 4.9a1.6 1.6 0 0 1 1.6-1.4z" />
-    ),
-  },
-  {
-    title: 'Every new lead followed up',
-    body: 'New enquiries get a reply and a follow up, without anyone having to remember.',
-    icon: (
-      <>
-        <path d="M4 5.5h14v9H9l-4 3.2v-3.2H4z" />
-        <path d="M8 9.2h6M8 11.6h4" />
-      </>
-    ),
-  },
-  {
-    title: 'Paperwork done for you',
-    body: 'Data entry, invoices and the weekly report, done without anyone retyping them.',
-    icon: (
-      <>
-        <path d="M6 3.5h7l3.5 3.5v11.5H6z" />
-        <path d="M13 3.5V7h3.5M8.6 11h5.8M8.6 14h5.8" />
-      </>
-    ),
-  },
-  {
-    title: 'Your tools connected',
-    body: 'Your CRM, email and accounting software pass information to each other by themselves.',
-    icon: (
-      <>
-        <path d="M9.5 12.5l3-3" />
-        <path d="M8.2 8.8l-2 2a2.9 2.9 0 0 0 4.1 4.1l2-2" />
-        <path d="M13.8 13.2l2-2a2.9 2.9 0 0 0-4.1-4.1l-2 2" />
-      </>
-    ),
-  },
-];
-
-/** What owners can hold us to. Each one is already promised in the ads. */
-const REASONS = [
-  { title: 'Fixed in 24 to 48 hours', body: 'Tell us something broke. It is fixed within 24 to 48 hours.' },
-  { title: 'Hours back in week one', body: 'Most teams notice hours coming back inside the first week.' },
-  { title: 'Built around your business', body: 'Custom built and connected to the tools you already use. Not a template.' },
-  { title: 'One named developer', body: 'The same person owns your job from start to finish.' },
-  { title: 'Updates without asking', body: 'Regular updates, whether or not there is good news that week.' },
-  { title: 'Based in Burlington', body: 'A real office at 1440 Grahams Lane, Burlington, Ontario.' },
-];
-
 export default async function VariantPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const v = bySlug(slug);
@@ -152,13 +102,7 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
               <ul className="jobs">
                 {JOBS.map((j) => (
                   <li key={j.title} className="job">
-                    <span className="job-icon" aria-hidden="true">
-                      <svg viewBox="0 0 22 22" width="22" height="22">
-                        <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                          {j.icon}
-                        </g>
-                      </svg>
-                    </span>
+                    <JobIcon name={j.icon} />
                     <div>
                       <h3 className="job-h">{j.title}</h3>
                       <p className="job-p">{j.body}</p>
@@ -226,18 +170,20 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
 
         {/* ---------- the form ---------- */}
         <section className="band" id="board">
-          <div className="shell form-grid">
-            <div className="form-side">
-              <h2 className="band-h" data-reveal>
-                Tell us one task that eats your team’s time
-              </h2>
-              <p className="band-lede">{v.formNote}</p>
-              {/* For the visitor who will not fill in a form. Kept quiet, so the
-                  form is still the ask. */}
-              <DirectLines place="form" ask="Rather talk than type? Call or email one of us." />
-            </div>
-            <div className="form-card">
-              <LeadForm variant={v} />
+          <div className="shell">
+            <div className="form-panel form-grid">
+              <div className="form-side">
+                <h2 className="band-h" data-reveal>
+                  Tell us one task that eats your team’s time
+                </h2>
+                <p className="band-lede">{v.formNote}</p>
+                {/* For the visitor who will not fill in a form. Kept quiet, so
+                    the form is still the ask. */}
+                <DirectLines place="form" ask="Rather talk than type? Call or email one of us." />
+              </div>
+              <div className="form-card">
+                <LeadForm variant={v} />
+              </div>
             </div>
           </div>
         </section>
@@ -362,12 +308,9 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
           <div className="shell">
             <div className="close-panel">
               <h2 className="close-h" data-reveal>
-                {v.closeH}
+                {CLOSE.h}
               </h2>
-              <p className="close-p">
-                Bring one repetitive job that annoys you. That is enough to work out whether there is
-                anything here worth doing.
-              </p>
+              <p className="close-p">{CLOSE.p}</p>
               <div className="cta-block">
                 <TrackedLink href="#board" event="cta_click" place="close" className="close-btn">
                   {CTA}
