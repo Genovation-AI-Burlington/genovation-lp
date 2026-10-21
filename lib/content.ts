@@ -99,6 +99,6 @@ export const REASONS: { title: string; body: string }[] = [
  * we do for them, not a comparison the visitor has to decode.
  */
 export const CLOSE = {
-  h: 'Let us take the repetitive work off your team.',
+  h: 'Less on your plate. More time to grow.',
   p: 'Bring one repetitive job to a free 30 minute call. We tell you honestly if it is worth automating.',
 };
