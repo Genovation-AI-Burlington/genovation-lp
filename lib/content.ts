@@ -8,6 +8,17 @@
 
 import type { JobIconName } from '@/components/JobIcon';
 
+/**
+ * The big headline at the top of every variant (Ali, 22 Oct 2026, from Jamal's
+ * "build, train and deploy AI employees"). `accent` is shown in blue and must
+ * appear in `line`. Under it sits the variant's H1, which carries the ad
+ * keyword; the big line is plain text so that H1 stays the page's heading.
+ */
+export const HERO = {
+  line: 'We build, train and deploy AI employees for your business.',
+  accent: 'AI employees',
+};
+
 /** "What we take off your team". `icon` names a drawing in `components/JobIcon.tsx`. */
 export const JOBS: { title: string; body: string; icon: JobIconName }[] = [
   {

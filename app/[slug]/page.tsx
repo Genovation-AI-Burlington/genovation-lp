@@ -9,7 +9,7 @@ import ProcessBoard from '@/components/ProcessBoard';
 import SiteFooter from '@/components/SiteFooter';
 import TrackedLink from '@/components/TrackedLink';
 import { GENERAL, LINES, OFFICE, REVIEWS } from '@/lib/contact';
-import { CLOSE, JOBS, REASONS } from '@/lib/content';
+import { CLOSE, HERO, JOBS, REASONS } from '@/lib/content';
 import { bySlug, CTA, CTA_NOTE, SLUGS } from '@/lib/variants';
 
 export const dynamicParams = false;
@@ -33,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-/** The H1 with its result words in the accent colour. */
+/** A line with one phrase in the accent colour. */
 function Headline({ text, accent }: { text: string; accent: string }) {
   const at = text.indexOf(accent);
   if (at === -1) return <>{text}</>;
@@ -81,10 +81,12 @@ export default async function VariantPage({ params }: { params: Promise<{ slug: 
               </span>
               <span>Burlington, Ontario</span>
             </TrackedLink>
-            <h1 className="hero-h">
-              <Headline text={v.h1} accent={v.accent} />
-            </h1>
-            <p className="hero-sub">{v.sub}</p>
+            {/* The big line is the visual headline; the H1 under it carries the
+                ad group's keyword, which is what Google reads as the heading. */}
+            <p className="hero-h">
+              <Headline text={HERO.line} accent={HERO.accent} />
+            </p>
+            <h1 className="hero-kw">{v.h1}</h1>
             <div className="cta-block">
               <TrackedLink href="#board" event="cta_click" place="hero" className="btn btn-lg">
                 {CTA}
